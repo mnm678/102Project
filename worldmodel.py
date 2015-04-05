@@ -62,7 +62,7 @@ def add_entity(world, entity):
 def move_entity(world, entity, pt):
    tiles = []
    if within_bounds(world, pt):
-      old_pt = entities.get_position(entity)
+      old_pt = entity.get_position()
       occ_grid.set_cell(world.occupancy, old_pt, None)
       tiles.append(old_pt)
       occ_grid.set_cell(world.occupancy, pt, entity)
@@ -73,7 +73,7 @@ def move_entity(world, entity, pt):
 
 
 def remove_entity(world, entity):
-   remove_entity_at(world, entities.get_position(entity))
+   remove_entity_at(world, entity.get_position())
 
 
 def remove_entity_at(world, pt):
@@ -107,7 +107,7 @@ def update_on_time(world, ticks):
 
 def get_background_image(world, pt):
    if within_bounds(world, pt):
-      return entities.get_image(occ_grid.get_cell(world.background, pt))
+      return occ_grid.get_cell(world.background, pt).get_image()
 
 
 def get_background(world, pt):

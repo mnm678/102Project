@@ -7,6 +7,10 @@ class Background:
       self.current_img = 0
    def get_images(self):
       return self.imgs
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 
 class MinerNotFull:
@@ -27,6 +31,36 @@ class MinerNotFull:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_rate(self):
+      return self.rate
+   def set_resource_count(self, n):
+      self.resource_count = n
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_resource_count(self):
+      return self.resource_count
+   def get_resource_limit(self):
+      return self.resource_limit
+   def get_name(self):
+      return self.name
+   def get_animation_rate(self):
+      return self.animation_rate
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class MinerFull:
    def __init__(self, name, resource_limit, position, rate, imgs,
@@ -46,6 +80,36 @@ class MinerFull:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_rate(self):
+      return self.rate
+   def set_resource_count(self, n):
+      self.resource_count = n
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_resource_count(self):
+      return self.resource_count
+   def get_resource_limit(self):
+      return self.resource_limit
+   def get_name(self):
+      return self.name
+   def get_animation_rate(self):
+      return self.animation_rate
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class Vein:
    def __init__(self, name, rate, position, imgs, resource_distance=1):
@@ -62,6 +126,30 @@ class Vein:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_rate(self):
+      return self.rate
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_name(self):
+      return self.name
+   def get_resource_distance(self):
+      return self.resource_distance
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class Ore:
    def __init__(self, name, position, imgs, rate=5000):
@@ -75,6 +163,28 @@ class Ore:
       self.position=point
    def get_position(self):
       return self.position
+   def get_rate(self):
+      return self.rate
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_name(self):
+      return self.name
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class Blacksmith:
    def __init__(self, name, position, imgs, resource_limit, rate,
@@ -92,6 +202,27 @@ class Blacksmith:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_rate(self):
+      return self.rate
+   def get_resource_count(self):
+      return self.resource_count
+   def set_resource_count(self, n):
+      self.resource_count = n
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class Obstacle:
    def __init__(self, name, position, imgs):
@@ -105,6 +236,10 @@ class Obstacle:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class OreBlob:
    def __init__(self, name, position, rate, imgs, animation_rate):
@@ -121,6 +256,30 @@ class OreBlob:
       return self.position
    def get_images(self):
       return self.imgs
+   def get_rate(self):
+      return self.rate
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_name(self):
+      return self.name
+   def get_animation_rate(self):
+      return self.animation_rate
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 class Quake:
    def __init__(self, name, position, imgs, animation_rate):
@@ -136,56 +295,26 @@ class Quake:
       return self.position
    def get_images(self):
       return self.imgs
-
-def get_image(entity):
-   return entity.imgs[entity.current_img]
-
-
-def get_rate(entity):
-   return entity.rate
-
-
-def set_resource_count(entity, n):
-   entity.resource_count = n
-
-def get_resource_count(entity):
-   return entity.resource_count
-
-
-def get_resource_limit(entity):
-   return entity.resource_limit
-
-
-def get_resource_distance(entity):
-   return entity.resource_distance
-
-
-def get_name(entity):
-   return entity.name
-
-
-def get_animation_rate(entity):
-   return entity.animation_rate
-
-
-def remove_pending_action(entity, action):
-   if hasattr(entity, "pending_actions"):
-      entity.pending_actions.remove(action)
-
-def add_pending_action(entity, action):
-   if hasattr(entity, "pending_actions"):
-      entity.pending_actions.append(action)
-
-
-def get_pending_actions(entity):
-   if hasattr(entity, "pending_actions"):
-      return entity.pending_actions
-   else:
-      return []
-
-def clear_pending_actions(entity):
-   if hasattr(entity, "pending_actions"):
-      entity.pending_actions = []
+   def get_image(self):
+      return self.imgs[self.current_img]
+   def get_animation_rate(self):
+      return self.animation_rate
+   def remove_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.remove(action)
+   def add_pending_action(self, action):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions.append(action)
+   def get_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         return self.pending_actions
+      else:
+         return []
+   def clear_pending_actions(self):
+      if hasattr(self, "pending_actions"):
+         self.pending_actions = []
+   def next_image(self):
+      self.current_img = (self.current_img + 1) % len(self.imgs)
 
 
 def next_image(entity):
