@@ -229,3 +229,39 @@ clear_pending_actions
 	does not work directly on any class
 
 
+CONTROLLER
+	These functions deal with external input or pygame not any of the classes.
+
+SAVE_LOAD
+	These worked with the properties input and had a lot of duplicate names with funtions already in the classes. Keeping them seperate helped clear up the code and kept the properties functions seperate from where they are used
+
+POINT
+class: Point
+no methods
+
+BUILDER
+	external program, not used in functionality of code
+
+BUILDER_CONTROLLER
+	sets up the world made in builder
+
+IMAGE_STORE
+	deals with images and externals input
+
+KEYS
+MOUSE_BUTTONS
+	has no functions
+
+ORDERED_LIST
+class:OrderedList
+methods:
+	insert
+	remove
+	head
+	pop
+
+class: ListItem
+no methods
+
+
+
