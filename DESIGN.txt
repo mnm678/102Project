@@ -233,7 +233,7 @@ CONTROLLER
 	These functions deal with external input or pygame not any of the classes.
 
 SAVE_LOAD
-	These worked with the properties input and had a lot of duplicate names with funtions already in the classes. Keeping them seperate helped clear up the code and kept the properties functions seperate from where they are used
+	These worked with the default properties input and had a lot of duplicate names with funtions already in the classes. Keeping them seperate helped clear up the code and kept the properties functions seperate from where they are used
 
 POINT
 class: Point
@@ -263,5 +263,5 @@ methods:
 class: ListItem
 no methods
 
-
-
+MAIN
+	runs other files, doesn't work directly with data
