@@ -136,14 +136,33 @@ class WorldModel:
 
          return [entity.get_position()]
       return action
-   # def schedule_action(self, entity, action, time):
-   #    entity.add_pending_action(action)
-   #    self.schedule_action(entity, action, time)
    def schedule_animation(self, entity, repeat_count=0):
       schedule_action(self, entity,
          self.create_animation_action(entity, repeat_count),
          entity.get_animation_rate())
+   def handle_mouse_button(self, view, event, entity_select, i_store):
+      mouse_pt = mouse_to_tile(event.pos, view.tile_width, view.tile_height)
+      tile_view_pt = worldview.viewport_to_world(view.viewport, mouse_pt)
+      if event.button == mouse_buttons.LEFT and entity_select:
+         if is_background_tile(entity_select):
+            worldmodel.set_background(self, tile_view_pt,
+               entities.Background(entity_select,
+                  image_store.get_images(i_store, entity_select)))
+            return [tile_view_pt]
+         else:
+            new_entity = create_new_entity(tile_view_pt, entity_select, i_store)
+            if new_entity:
+               worldmodel.remove_entity_at(self, tile_view_pt)
+               worldmodel.add_entity(self, new_entity)
+               return [tile_view_pt]
+      elif event.button == mouse_buttons.RIGHT:
+         worldmodel.remove_entity_at(self, tile_view_pt)
+         return [tile_view_pt]
 
+      return []
+   def save_world(self, filename):
+      with open(filename, 'w') as file:
+         save_load.save_world(self, file)
 
 
 

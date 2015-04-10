@@ -1,0 +1,231 @@
+ENTITIES
+class: Background
+methods:
+	get_images
+	get_image
+	next_image
+
+class: MinerNotFull
+methods:
+	set_position
+	get_position
+	get_images
+	get_rate
+	set_resource_count
+	get_image
+	get_resource_count
+	get_resource_limit
+	get_name
+	get_animation_rate
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear_pending_actions
+	next_image
+	miner_to_ore
+	try_transform_miner_not_full
+	try_transform_miner
+	schedule_miner
+	create_miner_action
+	remove_entity
+
+class: MinerFull
+methods:
+	set_position
+	get_position
+	get_images
+	get_rate
+	set_resource_count
+	get_image
+	get_resource_count
+	get_resource_limit
+	get_name
+	get_animation_rate
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear_pending_actions
+	next_image
+	miner_to_smith
+	try_transform_miner_full
+	try_transform_miner
+	create_miner_action
+	remove_entity
+
+class: Vein
+methods:
+	set_position
+	get_position
+	get_images
+	get-rate
+	get_image
+	get_name
+	get_resource_distance
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear_pending_actions
+	next_image
+	create_vein_action
+	schedule_vein
+	remove_entity
+
+class: Ore
+methods:
+	set_position
+	get_position
+	get_rate
+	get_image
+	get_name
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear-pending_actions
+	next_image
+	create_ore_transform_action
+	schedule_ore
+	remove_entity
+
+class: Blacksmith
+methods:
+	get_position
+	get_images
+	get_rate
+	get_resource_count
+	set_resource_count
+	get_image
+	add_pending_action
+	add_pending_actions
+	clear_pending_actions
+	next_image
+
+class: Obstacle
+methods:
+	set_position
+	get_position
+	get_images
+	get_image
+	next_image
+
+class: OreBlob
+methods:
+	set_position
+	get_position
+	get_images
+	get_rate
+	get_image
+	get_name
+	get_animation_rate
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear_pending_actions
+	next_image
+	blob_to_vein
+	create_ore_blob_action
+	schedule_blob
+	remove_entity
+	blob_next_position
+
+class: Quake
+methods:
+	set_position
+	get_position
+	get_images
+	get_image
+	get_animation_rate
+	remove_pending_action
+	add_pending_action
+	get_pending_actions
+	clear_pending_actions
+	next_image
+	create_entity_death_action
+	schedule_quake
+	remove_entity
+
+not in a method:
+entity_string
+	Utilized by all entities
+
+
+
+WORLDMODEL
+class: WorldModel
+methods:
+	within_bounds
+	is_occupied
+	find_nearest
+	add_entity
+	move_entity
+	remove_entity
+	remove_entity_at
+	schedule_action
+	unschedule_action
+	update_on_time
+	get_background_image
+	get_background
+	set_background
+	get_tile_occupant
+	get_entities
+	next_position
+	create_blob
+	find_open_around
+	create_ore
+	create_quake
+	create_vein
+	create_animation_action
+	schedule_animation
+	handle_mouse_button
+	save_world
+
+not in a method:
+nearest_entity
+	it's a helper function, doesn't fit in any class
+distance_sq
+	a helper function, uses two points, so would be confusing to use if put in points class
+
+
+OCC_GRID
+class: Grid
+methods:
+	set_cell
+	get_cell
+
+
+WORLDVIEW	
+class: WorldView
+methods:
+	draw_background
+	draw_entities
+	draw_viewport
+	update_view
+	update_view_tiles
+	get_tile_image
+	update_mouse_cursor
+	mouse_move
+	create_mouse_surface
+	activity_loop
+	handle_mouse_motion
+
+not in a method:
+viewport_to_world
+	does not directly use any of the classes
+world_to_viewport
+	does not directly use any of the classes
+clamp
+	does not directly use any of the classes
+create_shifted_viewport
+	does not directly use any of the classes
+
+ACTIONS
+not in a method:
+sign
+	helper function
+adjacent
+	helper function
+schedule_action
+	does not work directly on any class
+clear_pending_actions
+	does not work directly on any class
+
+

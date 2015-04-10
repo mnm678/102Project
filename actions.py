@@ -37,22 +37,22 @@ def adjacent(pt1, pt2):
       (pt1.y == pt2.y and abs(pt1.x - pt2.x) == 1))
 
 
-def blob_next_position(world, entity_pt, dest_pt):
-   horiz = sign(dest_pt.x - entity_pt.x)
-   new_pt = point.Point(entity_pt.x + horiz, entity_pt.y)
+# def blob_next_position(world, entity_pt, dest_pt):
+#    horiz = sign(dest_pt.x - entity_pt.x)
+#    new_pt = point.Point(entity_pt.x + horiz, entity_pt.y)
 
-   if horiz == 0 or (world.is_occupied(new_pt) and
-      not isinstance(world.get_tile_occupant(new_pt),
-      entities.Ore)):
-      vert = sign(dest_pt.y - entity_pt.y)
-      new_pt = point.Point(entity_pt.x, entity_pt.y + vert)
+#    if horiz == 0 or (world.is_occupied(new_pt) and
+#       not isinstance(world.get_tile_occupant(new_pt),
+#       entities.Ore)):
+#       vert = sign(dest_pt.y - entity_pt.y)
+#       new_pt = point.Point(entity_pt.x, entity_pt.y + vert)
 
-      if vert == 0 or (world.is_occupied(new_pt) and
-         not isinstance(world.get_tile_occupant(new_pt),
-         entities.Ore)):
-         new_pt = point.Point(entity_pt.x, entity_pt.y)
+#       if vert == 0 or (world.is_occupied(new_pt) and
+#          not isinstance(world.get_tile_occupant(new_pt),
+#          entities.Ore)):
+#          new_pt = point.Point(entity_pt.x, entity_pt.y)
 
-   return new_pt
+#    return new_pt
 
 
 def schedule_action(world, entity, action, time):

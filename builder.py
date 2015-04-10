@@ -42,7 +42,7 @@ def main():
 
    view.update_view()
 
-   builder_controller.activity_loop(view, world, i_store)
+   view.activity_loop(world, i_store)
 
 
 if __name__ == '__main__':

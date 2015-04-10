@@ -19,27 +19,32 @@ class WorldView:
       self.num_rows = world.num_rows
       self.num_cols = world.num_cols
       self.mouse_img = mouse_img
+   
    def draw_background(self):
       for y in range(0, self.viewport.height):
          for x in range(0, self.viewport.width):
             w_pt = viewport_to_world(self.viewport, point.Point(x, y))
             img = self.world.get_background_image(w_pt)
             self.screen.blit(img, (x * self.tile_width, y * self.tile_height))
+   
    def draw_entities(self):
       for entity in self.world.entities:
          if self.viewport.collidepoint(entity.position.x, entity.position.y):
             v_pt = world_to_viewport(self.viewport, entity.position)
             self.screen.blit(entity.get_image(),
                (v_pt.x * self.tile_width, v_pt.y * self.tile_height))
+   
    def draw_viewport(self):
       self.draw_background()
       self.draw_entities()
+   
    def update_view(self, view_delta=(0,0), mouse_img=None):
       self.viewport = create_shifted_viewport(self.viewport, view_delta,
          self.num_rows, self.num_cols)
       self.draw_viewport()
       pygame.display.update()
       self.mouse_move(self.mouse_pt)
+   
    def update_view_tiles(self, tiles):
       rects = []
       for tile in tiles:
@@ -51,6 +56,7 @@ class WorldView:
                rects.append(self.update_mouse_cursor())
 
       pygame.display.update(rects)
+   
    def update_tile(self, view_tile_pt, surface):
       abs_x = view_tile_pt.x * self.tile_width
       abs_y = view_tile_pt.y * self.tile_height
@@ -58,6 +64,7 @@ class WorldView:
       self.screen.blit(surface, (abs_x, abs_y))
 
       return pygame.Rect(abs_x, abs_y, self.tile_width, self.tile_height)
+   
    def get_tile_image(self, view_tile_pt):
       pt = viewport_to_world(self.viewport, view_tile_pt)
       bgnd = self.world.get_background_image(pt)
@@ -69,11 +76,13 @@ class WorldView:
          return img
       else:
          return bgnd
+   
    def update_mouse_cursor(self):
       return self.update_tile(self.mouse_pt,
          self.create_mouse_surface(
             self.world.is_occupied(
                viewport_to_world(self.viewport, self.mouse_pt))))
+   
    def mouse_move(self, new_mouse_pt):
       rects = []
 
@@ -87,6 +96,7 @@ class WorldView:
       rects.append(self.update_mouse_cursor())
 
       pygame.display.update(rects)
+   
    def create_mouse_surface(self, occupied):
       surface = pygame.Surface((self.tile_width, self.tile_height))
       surface.set_alpha(MOUSE_HOVER_ALPHA)
@@ -98,6 +108,30 @@ class WorldView:
          surface.blit(self.mouse_img, (0, 0))
 
       return surface
+   
+   def activity_loop(self, world, i_store):
+      pygame.key.set_repeat(keys.KEY_DELAY, keys.KEY_INTERVAL)
+
+      entity_select = None
+      while 1:
+         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+               return
+            elif event.type == pygame.MOUSEMOTION:
+               self.handle_mouse_motion(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+               tiles = world.handle_mouse_button(self, event, entity_select,
+                  i_store)
+               worldview.update_view_tiles(self, tiles)
+            elif event.type == pygame.KEYDOWN:
+               entity_select = handle_keydown(self, event, i_store, world,
+                  entity_select)
+   
+   def handle_mouse_motion(self, event):
+      mouse_pt = mouse_to_tile(event.pos, self.tile_width, self.tile_height)
+      self.mouse_move(mouse_pt)
+
+
 
 
 def viewport_to_world(viewport, pt):
