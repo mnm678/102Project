@@ -31,10 +31,20 @@ class Entity(Entities):
    def get_position(self):
       return self.position
 
+   def entity_string(entity):
+      try:
+         return ' '.join([self._type(), entity.name, str(entity.position.x),
+            str(entity.position.y), str(entity.resource_limit),
+            str(entity.rate), str(entity.animation_rate)])
+      except:
+         return 'unknown'
 
 class Obstacle(Entity):
    def __init__(self, name, position, imgs):
       super(Obstacle,self).__init__(name, imgs, position)
+
+   def _type(self):
+      return 'obstacle'
 
 class PendingActions(object):
    def remove_pending_action(self, action):
@@ -80,16 +90,14 @@ class AnimationRate(PendingActions):
    def get_animation_rate(self):
       return self.animation_rate
 
-
-class MinerNotFull(Entity, Animated):
+class Miner(Entity, Animated):
    def __init__(self, name, resource_limit, position, rate, imgs,
       animation_rate):
-      super(MinerNotFull,self).__init__(name, imgs, position)
+      super(Miner,self).__init__(name, imgs, position)
       Animated.__init__(self, rate)
       self.resource_limit = resource_limit
       self.resource_count = 0
       self.animation_rate = animation_rate
-      self.pending_actions = []
 
    def set_resource_count(self, n):
       self.resource_count = n
@@ -102,6 +110,47 @@ class MinerNotFull(Entity, Animated):
 
    def get_animation_rate(self):
       return self.animation_rate
+
+   def try_transform_miner(self, world, transform):
+      new_entity = transform(world)
+      if self != new_entity:
+         clear_pending_actions(world, self)
+         world.remove_entity_at(self.get_position())
+         world.add_entity(new_entity)
+         world.schedule_animation(new_entity)
+      return new_entity
+
+   def create_miner_action(self, world, i_store):
+      def action(current_ticks):
+         self.remove_pending_action(action)
+
+         entity_pt = self.get_position()
+         (tiles, found) = self._startingAction(entity_pt, world)
+         
+         new_entity = self
+         if found:
+            new_entity = self.try_transform_miner(world,
+               self._returnType())
+
+         schedule_action(world, new_entity,
+            new_entity.create_miner_action(world, i_store),
+            current_ticks + new_entity.get_rate())
+         return tiles
+      return action
+
+
+
+class MinerNotFull(Miner):
+   def __init__(self, name, resource_limit, position, rate, imgs,
+      animation_rate):
+      super(MinerNotFull,self).__init__(name, resource_limit, position, rate, imgs, animation_rate)
+      self.pending_actions = []
+
+   def _type(self):
+      return 'miner'
+
+   def _returnType(self):
+      return self.try_transform_miner_not_full
 
    def miner_to_ore(self, world, ore):
       miner_pt = self.get_position()
@@ -127,61 +176,28 @@ class MinerNotFull(Entity, Animated):
             self.get_images(), self.get_animation_rate())
          return new_entity
 
-   def try_transform_miner(self, world, transform):
-      new_entity = transform(world)
-      if self != new_entity:
-         clear_pending_actions(world, self)
-         world.remove_entity_at(self.get_position())
-         world.add_entity(new_entity)
-         world.schedule_animation(new_entity)
-      return new_entity
-
    def schedule_miner(self, world, ticks, i_store):
       schedule_action(world, self, self.create_miner_action(world, i_store),
          ticks + self.get_rate())
       world.schedule_animation(self)
 
-   def create_miner_action(self, world, i_store):
-      def action(current_ticks):
-         self.remove_pending_action(action)
+   def _startingAction(self, entity_pt, world):
+      ore = world.find_nearest(entity_pt, entities.Ore)
+      return self.miner_to_ore(world, ore)
 
-         entity_pt = self.get_position()
-         ore = world.find_nearest(entity_pt, entities.Ore)
-         (tiles, found) = self.miner_to_ore(world, ore)
-
-         new_entity = self
-         if found:
-            new_entity = self.try_transform_miner(world,
-               self.try_transform_miner_not_full)
-
-         schedule_action(world, new_entity,
-            new_entity.create_miner_action(world, i_store),
-            current_ticks + new_entity.get_rate())
-         return tiles
-      return action
-
-
-class MinerFull(Entity, Animated):
+class MinerFull(Miner):
    def __init__(self, name, resource_limit, position, rate, imgs,
       animation_rate):
-      super(MinerFull,self).__init__(name, imgs, position)
-      Animated.__init__(self, rate)
-      self.resource_limit = resource_limit
+      super(MinerFull,self).__init__(name, resource_limit, position, rate, imgs, animation_rate)
       self.resource_count = resource_limit
-      self.animation_rate = animation_rate
       self.pending_actions = []
 
-   def set_resource_count(self, n):
-      self.resource_count = n
+   def _returnType(self):
+      return self.try_transform_miner_full
 
-   def get_resource_count(self):
-      return self.resource_count
-
-   def get_resource_limit(self):
-      return self.resource_limit
-
-   def get_animation_rate(self):
-      return self.animation_rate
+   def _startingAction(self, entity_pt,world):
+      smith = world.find_nearest(entity_pt, entities.Blacksmith)
+      return self.miner_to_smith(world, smith)
 
    def miner_to_smith(self, world, smith):
       miner_pt = self.get_position()
@@ -206,41 +222,15 @@ class MinerFull(Entity, Animated):
 
       return new_entity
 
-   def try_transform_miner(self, world, transform):
-      new_entity = transform(world)
-      if self != new_entity:
-         clear_pending_actions(world, self)
-         world.remove_entity_at(self.get_position())
-         world.add_entity(new_entity)
-         world.schedule_animation(new_entity)
-      return new_entity
-
-   def create_miner_action(self, world, i_store):
-      def action(current_ticks):
-         self.remove_pending_action(action)
-
-         entity_pt = self.get_position()
-         smith = world.find_nearest(entity_pt, entities.Blacksmith)
-         (tiles, found) = self.miner_to_smith(world, smith)
-
-         new_entity = self
-         if found:
-            new_entity = self.try_transform_miner(world,
-               self.try_transform_miner_full)
-
-         schedule_action(world, new_entity,
-            new_entity.create_miner_action(world, i_store),
-            current_ticks + new_entity.get_rate())
-         return tiles
-      return action
-
-
 class Vein(Entity, Animated):
    def __init__(self, name, rate, position, imgs, resource_distance=1):
       super(Vein,self).__init__(name, imgs, position)
       Animated.__init__(self, rate)
       self.resource_distance = resource_distance
       self.pending_actions = []
+
+   def _type(self):
+      return 'vein'
    
    def get_resource_distance(self):
       return self.resource_distance
@@ -269,12 +259,33 @@ class Vein(Entity, Animated):
       schedule_action(world, self, self.create_vein_action(world, i_store),
          ticks + self.get_rate())
    
+   def create_miner_action(self, world, i_store):
+      def action(current_ticks):
+         self.remove_pending_action(action)
+
+         entity_pt = self.get_position()
+         ore = world.find_nearest(entity_pt, entities.Ore)
+         (tiles, found) = self.miner_to_ore(world, ore)
+
+         new_entity = self
+         if found:
+            new_entity = self.try_transform_miner(world,
+               self.try_transform_miner_not_full)
+
+         schedule_action(world, new_entity,
+            new_entity.create_miner_action(world, i_store),
+            current_ticks + new_entity.get_rate())
+         return tiles
+      return action
 
 class Ore(Entity, Animated):
    def __init__(self, name, position, imgs, rate=5000):
       super(Ore,self).__init__(name, imgs, position)
       Animated.__init__(self, rate)
       self.pending_actions = []
+
+   def _type(self):
+      return 'ore'
    
    def create_ore_transform_action(self, world, i_store):
       def action(current_ticks):
@@ -305,6 +316,9 @@ class Blacksmith(Entity):
       self.rate = rate
       self.resource_distance = resource_distance
       self.pending_actions = []
+
+   def _type(self):
+      return 'blacksmith'
    
    def get_rate(self):
       return self.rate
@@ -314,20 +328,6 @@ class Blacksmith(Entity):
    
    def set_resource_count(self, n):
       self.resource_count = n
-   
-   # def add_pending_action(self, action):
-   #    if hasattr(self, "pending_actions"):
-   #       self.pending_actions.append(action)
-   
-   # def get_pending_actions(self):
-   #    if hasattr(self, "pending_actions"):
-   #       return self.pending_actions
-   #    else:
-   #       return []
-   
-   # def clear_pending_actions(self):
-   #    if hasattr(self, "pending_actions"):
-   #       self.pending_actions = []
 
 
 class OreBlob(Entity, AnimationRate):
@@ -418,31 +418,3 @@ class Quake(Entity, AnimationRate):
       world.schedule_animation(self, QUAKE_STEPS) 
       schedule_action(world, self, self.create_entity_death_action(world),
          ticks + QUAKE_DURATION)
-
-
-
-
-# This is a less than pleasant file format, but structured based on
-# material covered in course.  Something like JSON would be a
-# significant improvement.
-def entity_string(entity):
-   if isinstance(entity, MinerNotFull):
-      return ' '.join(['miner', entity.name, str(entity.position.x),
-         str(entity.position.y), str(entity.resource_limit),
-         str(entity.rate), str(entity.animation_rate)])
-   elif isinstance(entity, Vein):
-      return ' '.join(['vein', entity.name, str(entity.position.x),
-         str(entity.position.y), str(entity.rate),
-         str(entity.resource_distance)])
-   elif isinstance(entity, Ore):
-      return ' '.join(['ore', entity.name, str(entity.position.x),
-         str(entity.position.y), str(entity.rate)])
-   elif isinstance(entity, Blacksmith):
-      return ' '.join(['blacksmith', entity.name, str(entity.position.x),
-         str(entity.position.y), str(entity.resource_limit),
-         str(entity.rate), str(entity.resource_distance)])
-   elif isinstance(entity, Obstacle):
-      return ' '.join(['obstacle', entity.name, str(entity.position.x),
-         str(entity.position.y)])
-   else:
-      return 'unknown'
