@@ -20,6 +20,7 @@ class Entities(object):
 class Background(Entities):
    pass
 
+
 class Entity(Entities):
    def __init__(self,name,imgs,position):
       super(Entity,self).__init__(name, imgs)
@@ -38,6 +39,7 @@ class Entity(Entities):
             str(entity.rate), str(entity.animation_rate)])
       except:
          return 'unknown'
+
 
 class Obstacle(Entity):
    def __init__(self, name, position, imgs):
@@ -90,6 +92,7 @@ class AnimationRate(PendingActions):
    def get_animation_rate(self):
       return self.animation_rate
 
+
 class Miner(Entity, Animated):
    def __init__(self, name, resource_limit, position, rate, imgs,
       animation_rate):
@@ -139,7 +142,6 @@ class Miner(Entity, Animated):
       return action
 
 
-
 class MinerNotFull(Miner):
    def __init__(self, name, resource_limit, position, rate, imgs,
       animation_rate):
@@ -185,6 +187,7 @@ class MinerNotFull(Miner):
       ore = world.find_nearest(entity_pt, entities.Ore)
       return self.miner_to_ore(world, ore)
 
+
 class MinerFull(Miner):
    def __init__(self, name, resource_limit, position, rate, imgs,
       animation_rate):
@@ -221,6 +224,7 @@ class MinerFull(Miner):
          self.get_images(), self.get_animation_rate())
 
       return new_entity
+
 
 class Vein(Entity, Animated):
    def __init__(self, name, rate, position, imgs, resource_distance=1):
@@ -277,6 +281,7 @@ class Vein(Entity, Animated):
             current_ticks + new_entity.get_rate())
          return tiles
       return action
+
 
 class Ore(Entity, Animated):
    def __init__(self, name, position, imgs, rate=5000):
@@ -380,7 +385,6 @@ class OreBlob(Entity, AnimationRate):
       schedule_action(world, self, self.create_ore_blob_action(world, i_store),
          ticks + self.get_rate())
       world.schedule_animation(self)
-   
 
    def blob_next_position(self, world, dest_pt):
       horiz = sign(dest_pt.x - self.position.x)

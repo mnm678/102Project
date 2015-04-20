@@ -31,17 +31,13 @@ def sign(x):
    else:
       return 0
 
-
 def adjacent(pt1, pt2):
    return ((pt1.x == pt2.x and abs(pt1.y - pt2.y) == 1) or
       (pt1.y == pt2.y and abs(pt1.x - pt2.x) == 1))
 
-
-
 def schedule_action(world, entity, action, time):
    entity.add_pending_action(action)
    world.schedule_action(action, time)
-
 
 def clear_pending_actions(world, entity):
    for action in entity.get_pending_actions():
